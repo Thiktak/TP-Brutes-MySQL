@@ -17,7 +17,7 @@ import java.util.logging.Logger;
 public class ServerThread extends Thread {
 
     public static final int TIMEOUT_ACCEPT = 10000;
-    public static final int TIMEOUT_CLIENT = 10000;
+    public static final int TIMEOUT_CLIENT = 2000;
     public static final boolean SERVER_MySQL = true;
 
     @Override
@@ -25,7 +25,7 @@ public class ServerThread extends Thread {
         try (ServerSocket sockserv = new ServerSocket(42666)) {
             sockserv.setSoTimeout(ServerThread.TIMEOUT_ACCEPT);
 
-            boolean toPopulate = true;
+            boolean toPopulate = false;
             if (!ServerThread.SERVER_MySQL) {
                 // DEBUG
                 (new File("~$bdd.db")).delete();
