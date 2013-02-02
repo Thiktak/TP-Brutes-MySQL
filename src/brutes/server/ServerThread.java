@@ -95,6 +95,5 @@ public class ServerThread extends Thread {
         } catch (JDOMException | IOException ex) {
             Logger.getLogger(ServerThread.class.getName()).log(Level.SEVERE, null, ex);
         }
-        // */
     }
 }
