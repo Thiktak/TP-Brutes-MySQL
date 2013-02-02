@@ -17,7 +17,7 @@ import java.util.logging.Logger;
 public class ServerThread extends Thread {
 
     public static final int TIMEOUT_ACCEPT = 10000;
-    public static final int TIMEOUT_CLIENT = 1000;
+    public static final int TIMEOUT_CLIENT = 10000;
     public static final boolean SERVER_MySQL = true;
 
     @Override
@@ -25,8 +25,8 @@ public class ServerThread extends Thread {
         try (ServerSocket sockserv = new ServerSocket(42666)) {
             sockserv.setSoTimeout(ServerThread.TIMEOUT_ACCEPT);
 
-            boolean toPopulate = false;
-            if (ServerThread.SERVER_MySQL) {
+            boolean toPopulate = true;
+            if (!ServerThread.SERVER_MySQL) {
                 // DEBUG
                 (new File("~$bdd.db")).delete();
                 toPopulate = true;
@@ -34,12 +34,16 @@ public class ServerThread extends Thread {
                 //File file = new File("~$bdd.db");
                 //boolean toPopulate = !file.exists();
                 DatasManager.getInstance("sqlite", "~$bdd.db");
+                System.out.println("SQLite");
             } else {
-                DatasManager.getInstance("mysql", "sql2.freesqldatabase.com:3306/sql22967", "sql22967", "hI3%yA5*");
+                DatasManager.getInstance("mysql", "199.16.131.115/olivares_tp_brute", "olivares_brute", "TPc9hBEzVM2S");
+                //DatasManager.getInstance("mysql", "sql2.freesqldatabase.com:3306/sql22967", "sql22967", "hI3%yA5*");
+                System.out.println("MySQL");
             }
 
             if (toPopulate) {
                 DatasManager.populate();
+                System.out.println("populate");
             }
 
             while (!this.isInterrupted()) {

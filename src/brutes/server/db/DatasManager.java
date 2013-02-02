@@ -80,7 +80,7 @@ public class DatasManager {
     }
 
     public static Connection getInstance(String type, String dbpath) throws IOException {
-        return DatasManager.getInstance(type, dbpath, null, null);
+        return DatasManager.getInstance(type, dbpath, "", "");
     }
 
     public static void populate() throws IOException {
