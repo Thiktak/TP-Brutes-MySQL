@@ -41,7 +41,9 @@ public class FightEntity implements Entity {
         psql.setInt(1, fight.getBrute1().getId());
         psql.setInt(2, fight.getBrute2().getId());
         psql.executeUpdate();
-        fight.setId(psql.getGeneratedKeys().getInt(1));
+        ResultSet rs = psql.getGeneratedKeys();
+        rs.next();
+        fight.setId(rs.getInt(1));
         return fight;
     }
 
@@ -58,7 +60,7 @@ public class FightEntity implements Entity {
     }
 
     public static Fight findByBruteId(int id) throws IOException, SQLException, NotFoundEntityException {
-        PreparedStatement psql = DatasManager.prepare("SELECT * FROM fights WHERE (brute_id1 = ? OR brute_id2 = ?) AND winner_id IS NULL ORDER BY date_created DESC LIMIT 1");
+        PreparedStatement psql = DatasManager.prepare("SELECT * FROM Fights WHERE (brute_id1 = ? OR brute_id2 = ?) AND winner_id IS NULL ORDER BY date_created DESC LIMIT 1");
         psql.setInt(1, id);
         psql.setInt(2, id);
         ResultSet rs = psql.executeQuery();
@@ -69,7 +71,7 @@ public class FightEntity implements Entity {
     }
     
     public static Fight findById(int id) throws IOException, SQLException, NotFoundEntityException {
-        PreparedStatement psql = DatasManager.prepare("SELECT * FROM fights WHERE id = ?");
+        PreparedStatement psql = DatasManager.prepare("SELECT * FROM Fights WHERE id = ?");
         psql.setInt(1, id);
         ResultSet rs = psql.executeQuery();
         if (rs.next()) {

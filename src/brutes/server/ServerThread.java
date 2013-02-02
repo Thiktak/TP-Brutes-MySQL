@@ -18,22 +18,29 @@ public class ServerThread extends Thread {
 
     public static final int TIMEOUT_ACCEPT = 10000;
     public static final int TIMEOUT_CLIENT = 1000;
+    public static final boolean SERVER_MySQL = true;
 
     @Override
     public void run() {
         try (ServerSocket sockserv = new ServerSocket(42666)) {
             sockserv.setSoTimeout(ServerThread.TIMEOUT_ACCEPT);
 
-            // DEBUG
-            (new File("~$bdd.db")).delete();
-            //File file = new File("~$bdd.db");
-            //boolean toPopulate = !file.exists();
+            boolean toPopulate = false;
+            if (ServerThread.SERVER_MySQL) {
+                // DEBUG
+                (new File("~$bdd.db")).delete();
+                toPopulate = true;
 
-            DatasManager.getInstance("sqlite", "~$bdd.db");
+                //File file = new File("~$bdd.db");
+                //boolean toPopulate = !file.exists();
+                DatasManager.getInstance("sqlite", "~$bdd.db");
+            } else {
+                DatasManager.getInstance("mysql", "sql2.freesqldatabase.com:3306/sql22967", "sql22967", "hI3%yA5*");
+            }
 
-            //if( toPopulate ) {
-            DatasManager.populate();
-            //}
+            if (toPopulate) {
+                DatasManager.populate();
+            }
 
             while (!this.isInterrupted()) {
                 try {

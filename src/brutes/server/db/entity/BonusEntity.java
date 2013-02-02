@@ -99,13 +99,14 @@ public class BonusEntity implements Entity {
         String sql = "SELECT t.* FROM ("
                + "SELECT t1.* FROM (SELECT * FROM Bonus WHERE level = ? ORDER BY RANDOM() LIMIT 1) as t1"
                + " UNION ALL "
-               + "SELECT t2.* FROM (SELECT * FROM Bonus WHERE level >= ?1 ORDER BY RANDOM() LIMIT 1) as t2"
+               + "SELECT t2.* FROM (SELECT * FROM Bonus WHERE level >= ? ORDER BY RANDOM() LIMIT 1) as t2"
                + " UNION ALL "
                + "SELECT t3.* FROM (SELECT * FROM Bonus ORDER BY RANDOM() LIMIT 1) as t3"
                + ") as t LIMIT 1";
         
         PreparedStatement psql = DatasManager.prepare(sql);
         psql.setInt(1, level);
+        psql.setInt(2, level);
         ResultSet rs = psql.executeQuery();
 
         if (rs.next()) {

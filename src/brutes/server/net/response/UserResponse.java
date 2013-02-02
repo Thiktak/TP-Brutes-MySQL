@@ -33,7 +33,7 @@ public class UserResponse extends Response {
             throw new NetworkResponseException(Protocol.ERROR_WRONG_PASSWORD);
         } 
         else {
-            PreparedStatement psql = DatasManager.prepare("SELECT id, password FROM users WHERE pseudo = ?");
+            PreparedStatement psql = DatasManager.prepare("SELECT id, password FROM Users WHERE pseudo = ?");
             psql.setString(1, login);
             ResultSet rs = psql.executeQuery();
 

@@ -34,14 +34,14 @@ public class BruteEntity implements Entity {
         psql.setInt(6, brute.getImageID());
         psql.setInt(7, brute.getId());
         psql.executeUpdate();
-        
+
         psql = con.prepareStatement("DELETE FROM Shop WHERE brute_id = ?");
         psql.setInt(1, brute.getId());
         psql.executeUpdate();
-        
+
         psql = con.prepareStatement("INSERT INTO Shop (brute_id, bonus_id) VALUES(?, ?)");
-        for(int i = 0; i < Brute.MAX_BONUSES; i++){
-            if(brute.getBonuses()[i] != Bonus.EMPTY_BONUS){
+        for (int i = 0; i < Brute.MAX_BONUSES; i++) {
+            if (brute.getBonuses()[i] != Bonus.EMPTY_BONUS) {
                 psql.setInt(1, brute.getId());
                 psql.setInt(2, brute.getBonuses()[i].getId());
                 psql.executeUpdate();
@@ -58,7 +58,9 @@ public class BruteEntity implements Entity {
         psql.setInt(5, brute.getSpeed());
         psql.setInt(6, brute.getImageID());
         psql.executeUpdate();
-        brute.setId(psql.getGeneratedKeys().getInt(1));
+        ResultSet rs = psql.getGeneratedKeys();
+        rs.next();
+        brute.setId(rs.getInt(1));
         return brute;
     }
 
@@ -79,7 +81,7 @@ public class BruteEntity implements Entity {
     }
 
     public static Brute findByUser(User user) throws IOException, SQLException, NotFoundEntityException {
-        PreparedStatement psql = DatasManager.prepare("SELECT b.* FROM Brutes b LEFT JOIN users u ON (u.brute_id = b.id) WHERE u.id = ? ORDER BY id DESC");
+        PreparedStatement psql = DatasManager.prepare("SELECT b.* FROM Brutes b LEFT JOIN Users u ON (u.brute_id = b.id) WHERE u.id = ? ORDER BY id DESC");
         psql.setInt(1, user.getId());
         ResultSet rs = psql.executeQuery();
         if (rs.next()) {
@@ -92,7 +94,7 @@ public class BruteEntity implements Entity {
         PreparedStatement psql = DatasManager.prepare("SELECT * FROM Brutes WHERE id <> ? ORDER BY RANDOM() LIMIT 1");
         psql.setInt(1, user.getBrute());
         ResultSet rs = psql.executeQuery();
-        
+
         if (rs.next()) {
             return BruteEntity.create(rs);
         }
