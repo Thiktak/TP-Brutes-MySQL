@@ -13,7 +13,7 @@ import brutes.server.game.Brute;
 import brutes.server.game.Fight;
 import brutes.server.game.User;
 import brutes.server.net.NetworkResponseException;
-import brutes.server.ui;
+import brutes.server.ServerMath;
 import java.io.IOException;
 import java.sql.SQLException;
 
@@ -57,30 +57,27 @@ public class FightResponse extends Response {
 
         Brute brute = fight.getBrute1();
 
-        // level UP !
-        brute.setLevel((short) Math.min(brute.getLevel() + 1, 100));
+        if (brute.getLevel() <= 100) {
+            // level UP !
+            brute.setLevel((short) (brute.getLevel() + 1));
 
-        // stats UP !
-        switch (ui.random(2)) {
-            case 0:
-                brute.setLife((short) (brute.getLife() + ui.random(1, 10)));
-                break;
-            case 1:
-                brute.setSpeed((short) (brute.getSpeed() + ui.random(1, 5)));
-                break;
-            case 2:
-                brute.setStrength((short) (brute.getStrength() + ui.random(1, 5)));
-                break;
+            // stats UP !
+            switch (ServerMath.random(2)) {
+                case 0:
+                    brute.setLife((short) (brute.getLife() + ServerMath.random(1, 5)));
+                    break;
+                case 1:
+                    brute.setSpeed((short) (brute.getSpeed() + ServerMath.random(1, 5)));
+                    break;
+                case 2:
+                    brute.setStrength((short) (brute.getStrength() + ServerMath.random(1, 5)));
+                    break;
+            }
         }
 
         // bonus UP/RM
-        // Une chance sur 2
-        if (ui.random()) {
-            int select = ui.random(1, 2);
-
-            // Une chance sur 3 de perdre un bonus
-            brute.setBonus(select, ui.random(1, 3) == 1 ? Bonus.EMPTY_BONUS : BonusEntity.findMathematicalRandom());
-        }
+        // 1/3 : perte # 2/3 nouveau # action sur un des trois bonus, existant ou non.
+        brute.setBonus(ServerMath.random(0, Brute.MAX_BONUSES - 1), ServerMath.random(1, 3) == 1 ? Bonus.EMPTY_BONUS : BonusEntity.findMathematicalRandom());
 
         DatasManager.save(brute);
         fight.setWinner(brute);

@@ -13,6 +13,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.ReadOnlyBooleanWrapper;
+import javafx.beans.property.ReadOnlyObjectProperty;
+import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.concurrent.Task;
 
 /**
@@ -51,7 +53,10 @@ public class LoginTask extends Task{
         try (NetworkClient connection = new NetworkClient(new Socket(this.host, Protocol.CONNECTION_PORT))) {
             String token;
             token = connection.sendLogin(this.login, this.password);
+            NetworkClient.clearCache();
             ScenesContext.getInstance().setSession(new Session(this.host, token));
+            ScenesContext.getInstance().getSession().netLoadMyBrute();
+            ScenesContext.getInstance().getSession().netLoadChallengerBrute();
         } catch (UnknownHostException ex) {
             this.hostError.set(true);
             throw ex;
@@ -68,6 +73,9 @@ public class LoginTask extends Task{
             throw ex;
         } catch(InvalidResponseException ex){
             Logger.getLogger(LoginController.class.getName()).log(Level.WARNING, null, ex);
+            throw ex;
+        } catch(Exception ex){
+            ex.printStackTrace();
             throw ex;
         }
         return null;
