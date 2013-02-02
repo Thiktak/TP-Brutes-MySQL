@@ -13,9 +13,12 @@ import java.net.URL;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.animation.Animation;
 import javafx.animation.Animation.Status;
 import javafx.animation.ScaleTransition;
 import javafx.animation.ScaleTransitionBuilder;
+import javafx.animation.Timeline;
+import javafx.animation.TranslateTransitionBuilder;
 import javafx.beans.property.ReadOnlyBooleanWrapper;
 import javafx.beans.property.ReadOnlyStringProperty;
 import javafx.beans.property.ReadOnlyStringWrapper;
@@ -149,8 +152,8 @@ public class FightController implements Initializable {
             public void changed(ObservableValue<? extends Worker.State> observable, Worker.State oldValue, Worker.State newState) {
                 if(newState == Worker.State.SUCCEEDED){
                     Session s = ScenesContext.getInstance().getSession();
-                    s.netLoadMyBrute();
-                    s.netLoadChallengerBrute();
+                    s.netThreadedLoadMyBrute();
+                    s.netThreadedLoadChallengerBrute();
                     isFighting.set(false);
                     try {
                         Parent root;
@@ -244,12 +247,14 @@ public class FightController implements Initializable {
     }
     @FXML
     private void handleMenuDisconnect(Event e){
+        final String token = ScenesContext.getInstance().getSession().getToken();
+        final String host = ScenesContext.getInstance().getSession().getServer();
         new Thread(){
             @Override
             public void run() {
-                try (NetworkClient connection = new NetworkClient(new Socket(ScenesContext.getInstance().getSession().getServer(), Protocol.CONNECTION_PORT))) {
+                try (NetworkClient connection = new NetworkClient(new Socket(host, Protocol.CONNECTION_PORT))) {
                     try {
-                        connection.sendLogout(ScenesContext.getInstance().getSession().getToken());
+                        connection.sendLogout(token);
                     } catch (InvalidResponseException | ErrorResponseException ex) {
                         Logger.getLogger(FightController.class.getName()).log(Level.WARNING, null, ex);
                     }
@@ -259,6 +264,7 @@ public class FightController implements Initializable {
             }
         }.start();
         this.closeCurrentDialogStage();
+        ScenesContext.getInstance().destroySession();
         ScenesContext.getInstance().showLogin();
     }
     @FXML
@@ -302,6 +308,17 @@ public class FightController implements Initializable {
                 .autoReverse(true)
                 .cycleCount(2)
                 .build();
+        TranslateTransitionBuilder.create()
+                .node(this.arrow)
+                .duration(Duration.millis(500))
+                .fromX(1)
+                .fromY(1)
+                .toX(10)
+                .toY(16)
+                .autoReverse(true)
+                .cycleCount(Timeline.INDEFINITE)
+                .build().play();
+        
         
         this.isFighting = new ReadOnlyBooleanWrapper();
         this.isFighting.set(false);
@@ -360,8 +377,5 @@ public class FightController implements Initializable {
         this.menuOptCreate.disableProperty().bind(me.isLoadedProperty());
         this.menuOptRename.disableProperty().bind(me.isLoadedProperty().not());
         this.menuOptDelete.disableProperty().bind(me.isLoadedProperty().not());
-        
-        ScenesContext.getInstance().getSession().netLoadMyBrute();
-        ScenesContext.getInstance().getSession().netLoadChallengerBrute();
     }    
 }
