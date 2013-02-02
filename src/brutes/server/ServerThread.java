@@ -34,10 +34,12 @@ public class ServerThread extends Thread {
     public void run() {
         // Options
         try {
-            if( !(new File("res/options.xml")).exists()) {
+
+            if (!(new File("res/options.xml")).exists()) {
                 System.out.println("Create the file res/options.xml. See res/options.default.xml for more explanation.");
+                return;
             }
-            
+
             SAXBuilder sxb = new SAXBuilder();
             Element xmlServer = sxb.build("res/options.xml").getRootElement();
             for (Iterator<Element> i = xmlServer.getChildren("server").iterator(); i.hasNext();) {
@@ -58,39 +60,39 @@ public class ServerThread extends Thread {
                     ServerThread.SERVER_POPULATE = current1.getChild("populate").getText().equals("true");
                 }
             }
-        } catch (JDOMException | IOException ex) {
-            Logger.getLogger(ServerThread.class.getName()).log(Level.SEVERE, null, ex);
-        }
 
-        // Server
-        try (ServerSocket sockserv = new ServerSocket(42666)) {
-            sockserv.setSoTimeout(ServerThread.TIMEOUT_ACCEPT);
-            
-            // Create database connection
-            DatasManager.getInstance(ServerThread.SERVER_TYPE, ServerThread.SERVER_HOST, ServerThread.SERVER_LOGIN, ServerThread.SERVER_PASSWORD);
+            // Server
+            try (ServerSocket sockserv = new ServerSocket(42666)) {
+                sockserv.setSoTimeout(ServerThread.TIMEOUT_ACCEPT);
 
-            if (ServerThread.SERVER_POPULATE) {
-                DatasManager.populate();
-            }
-            
-            while (!this.isInterrupted()) {
-                try {
-                    final Socket sockcli = sockserv.accept();
-                    sockcli.setSoTimeout(ServerThread.TIMEOUT_CLIENT);
-                    new Thread() {
-                        @Override
-                        public void run() {
-                            try (NetworkServer n = new NetworkServer(sockcli)) {
-                                n.read();
-                            } catch (Exception ex) {
-                                Logger.getLogger(ServerThread.class.getName()).log(Level.SEVERE, null, ex);
-                            }
-                        }
-                    }.start();
-                } catch (SocketTimeoutException ex) {
+                // Create database connection
+                DatasManager.getInstance(ServerThread.SERVER_TYPE, ServerThread.SERVER_HOST, ServerThread.SERVER_LOGIN, ServerThread.SERVER_PASSWORD);
+
+                if (ServerThread.SERVER_POPULATE) {
+                    DatasManager.populate();
                 }
+
+                while (!this.isInterrupted()) {
+                    try {
+                        final Socket sockcli = sockserv.accept();
+                        sockcli.setSoTimeout(ServerThread.TIMEOUT_CLIENT);
+                        new Thread() {
+                            @Override
+                            public void run() {
+                                try (NetworkServer n = new NetworkServer(sockcli)) {
+                                    n.read();
+                                } catch (Exception ex) {
+                                    Logger.getLogger(ServerThread.class.getName()).log(Level.SEVERE, null, ex);
+                                }
+                            }
+                        }.start();
+                    } catch (SocketTimeoutException ex) {
+                    }
+                }
+            } catch (IOException ex) {
+                Logger.getLogger(ServerThread.class.getName()).log(Level.SEVERE, null, ex);
             }
-        } catch (IOException ex) {
+        } catch (JDOMException | IOException ex) {
             Logger.getLogger(ServerThread.class.getName()).log(Level.SEVERE, null, ex);
         }
         // */
