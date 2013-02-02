@@ -33,6 +33,7 @@ import javafx.scene.Cursor;
 import javafx.scene.Group;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
@@ -136,14 +137,11 @@ public class FightController implements Initializable {
     @FXML
     private MenuItem menuOptDelete;
     @FXML
-    private Group arrow;
-    
+    private Menu menuBrute;
     @FXML
-    private void handleVSover(Event e){
-        if(this.centerVsshadowScaleTransition.getStatus() != Status.RUNNING){
-            this.centerVsshadowScaleTransition.play();
-        }
-    }
+    private Group arrowBruteMenu;
+    @FXML
+    private Group arrowBruteNew;
     
     private void doFight(FightTask.FightType type){
         final FightTask fightTask = new FightTask(type);
@@ -161,16 +159,12 @@ public class FightController implements Initializable {
                         window.setResizable(false);
                         if(fightTask.getResultProperty().get()){
                             root = FXMLLoader.load(this.getClass().getResource("result/FightResultWin.fxml"));
-                            window.setTitle("Victoire !");
+                            setCurrentDialogStage(new Scene(root), "Victoire !");
                         }
                         else{
                             root = FXMLLoader.load(this.getClass().getResource("result/FightResultLoose.fxml"));
-                            window.setTitle("Défaite !");
+                            setCurrentDialogStage(new Scene(root), "Défaite !");
                         }
-                        Scene scene = new Scene(root);
-                        window.setScene(scene);
-                        setCurrentDialogStage(window);
-                        window.show();
                     } catch (IOException ex) {
                         Logger.getLogger(FightController.class.getName()).log(Level.SEVERE, null, ex);
                     }
@@ -204,13 +198,7 @@ public class FightController implements Initializable {
     private void handleMenuBruteNew(Event e){
         try {
             Parent root = FXMLLoader.load(this.getClass().getResource("brute/CreateBrute.fxml"));
-            Scene scene = new Scene(root);
-            Stage window = new Stage();
-            window.setScene(scene);
-            window.setTitle("Nouvelle brute");
-            window.setResizable(false);
-            this.setCurrentDialogStage(window);
-            window.show();
+            this.setCurrentDialogStage(new Scene(root), "Nouvelle brute");
         } catch (IOException ex) {
             Logger.getLogger(FightController.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -219,13 +207,7 @@ public class FightController implements Initializable {
     private void handleMenuBruteUpdate(Event e){
         try {
             Parent root = FXMLLoader.load(this.getClass().getResource("brute/UpdateBrute.fxml"));
-            Scene scene = new Scene(root);
-            Stage window = new Stage();
-            window.setScene(scene);
-            window.setTitle("Modifier la brute");
-            window.setResizable(false);
-            this.setCurrentDialogStage(window);
-            window.show();
+            this.setCurrentDialogStage(new Scene(root), "Modifier la brute");
         } catch (IOException ex) {
             Logger.getLogger(FightController.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -234,13 +216,7 @@ public class FightController implements Initializable {
     private void handleMenuBruteDelete(Event e){
         try {
             Parent root = FXMLLoader.load(this.getClass().getResource("brute/DeleteBrute.fxml"));
-            Scene scene = new Scene(root);
-            Stage window = new Stage();
-            window.setScene(scene);
-            window.setTitle("Supprimer la brute");
-            window.setResizable(false);
-            this.setCurrentDialogStage(window);
-            window.show();
+            this.setCurrentDialogStage(new Scene(root), "Supprimer la brute");
         } catch (IOException ex) {
             Logger.getLogger(FightController.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -271,26 +247,20 @@ public class FightController implements Initializable {
     private void handleMenuCredits(Event e){
         try {
             Parent root = FXMLLoader.load(this.getClass().getResource("Credits.fxml"));
-            Scene scene = new Scene(root);
-            Stage window = new Stage();
-            window.setScene(scene);
-            window.setTitle("À propos...");
-            window.setResizable(false);
-            this.setCurrentDialogStage(window);
-            window.show();
+            this.setCurrentDialogStage(new Scene(root), "À propos...");
         } catch (IOException ex) {
             Logger.getLogger(FightController.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     
-    private void setCurrentDialogStage(Stage stage){
+    private void setCurrentDialogStage(Scene scene, String title){
         this.closeCurrentDialogStage();
-        this.currentDialogStage = stage;
+        this.currentDialogStage.setScene(scene);
+        this.currentDialogStage.setTitle(title);
+        this.currentDialogStage.show();
     }
     private void closeCurrentDialogStage(){
-        if(this.currentDialogStage != null){
-            this.currentDialogStage.close();
-        }
+        this.currentDialogStage.hide();
     }
     
     /**
@@ -298,27 +268,39 @@ public class FightController implements Initializable {
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        this.centerVsshadowScaleTransition = ScaleTransitionBuilder.create()
+        ScaleTransitionBuilder.create()
                 .node(this.centerVSshadow)
                 .duration(Duration.seconds(1))
                 .fromX(1)
                 .fromY(1)
-                .toX(1.2)
-                .toY(1.2)
+                .toX(1.1)
+                .toY(1.1)
                 .autoReverse(true)
-                .cycleCount(2)
-                .build();
+                .cycleCount(Timeline.INDEFINITE)
+                .build().play();
         TranslateTransitionBuilder.create()
-                .node(this.arrow)
+                .node(this.arrowBruteNew)
                 .duration(Duration.millis(500))
-                .fromX(1)
-                .fromY(1)
+                .fromX(0)
+                .fromY(0)
+                .toX(18)
+                .toY(0)
+                .autoReverse(true)
+                .cycleCount(Timeline.INDEFINITE)
+                .build().play();
+        TranslateTransitionBuilder.create()
+                .node(this.arrowBruteMenu)
+                .duration(Duration.millis(500))
+                .fromX(0)
+                .fromY(0)
                 .toX(10)
                 .toY(16)
                 .autoReverse(true)
                 .cycleCount(Timeline.INDEFINITE)
                 .build().play();
         
+        this.currentDialogStage = new Stage();
+        this.currentDialogStage.setResizable(false);
         
         this.isFighting = new ReadOnlyBooleanWrapper();
         this.isFighting.set(false);
@@ -367,7 +349,8 @@ public class FightController implements Initializable {
         this.centerVS.setCursor(Cursor.HAND);
         this.centerVS.disableProperty().bind(this.isFighting.getReadOnlyProperty().or(me.isLoadedProperty().not()));
         
-        this.arrow.visibleProperty().bind(me.isLoadedProperty().not());
+        this.arrowBruteMenu.visibleProperty().bind(me.isLoadedProperty().not().and(this.menuBrute.showingProperty().not()).and(this.currentDialogStage.showingProperty().not()));
+        this.arrowBruteNew.visibleProperty().bind(me.isLoadedProperty().not().and(this.menuBrute.showingProperty()).and(this.currentDialogStage.showingProperty().not()));
         
         this.menuFightWin.disableProperty().bind(this.isFighting.getReadOnlyProperty().or(me.isLoadedProperty().not()));
         this.menuFightLoose.disableProperty().bind(this.isFighting.getReadOnlyProperty().or(me.isLoadedProperty().not()));
