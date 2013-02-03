@@ -12,6 +12,7 @@ public class Fight implements Identifiable {
     private Brute brute1;
     private Brute brute2;
     private Brute winner;
+    private String text;
 
     public Fight() {
     }
@@ -26,7 +27,8 @@ public class Fight implements Identifiable {
     public int getId() {
         return id;
     }
-    public void setId(int id){
+
+    public void setId(int id) {
         this.id = id;
     }
 
@@ -52,5 +54,13 @@ public class Fight implements Identifiable {
 
     public void setWinner(Brute winner) {
         this.winner = winner;
+    }
+
+    public String getText() {
+        return text;
+    }
+
+    public void setText(String text) {
+        this.text = text;
     }
 }

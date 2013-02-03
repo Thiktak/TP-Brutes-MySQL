@@ -139,6 +139,7 @@ public class DoFight {
             this.addLogsLn("YOU CAN'T CHOOSE ? GOD CAN !");
             return ServerMath.random() ? this.fight.getBrute1() : this.fight.getBrute2();
         }
+        this.fight.setText(this.logs.toString());
         return this.fight.getBrute1().getLife() > 0 ? this.fight.getBrute1() : this.fight.getBrute2(); // return the winner
     }
 }

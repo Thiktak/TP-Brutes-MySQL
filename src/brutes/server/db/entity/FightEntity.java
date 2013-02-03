@@ -28,11 +28,12 @@ public class FightEntity implements Entity {
     }
 
     public static void save(Connection con, Fight fight) throws IOException, SQLException {
-        PreparedStatement psql = con.prepareStatement("UPDATE Fights SET brute_id1 = ?, brute_id2 = ?, winner_id = ? WHERE id = ?");
+        PreparedStatement psql = con.prepareStatement("UPDATE Fights SET brute_id1 = ?, brute_id2 = ?, winner_id = ?, `text` = ? WHERE id = ?");
         psql.setInt(1, fight.getBrute1().getId());
         psql.setInt(2, fight.getBrute2().getId());
         psql.setInt(3, fight.getWinner() != null ? fight.getWinner().getId() : null);
-        psql.setInt(4, fight.getId());
+        psql.setString(4, fight.getText());
+        psql.setInt(5, fight.getId());
         psql.executeUpdate();
     }
 
