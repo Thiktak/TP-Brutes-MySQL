@@ -42,7 +42,9 @@ public class BonusEntity implements Entity {
         psql.setInt(5, bonus.getSpeed());
         psql.setInt(6, bonus.getImageID());
         psql.executeUpdate();
-        bonus.setId(psql.getGeneratedKeys().getInt(1));
+        ResultSet rs = psql.getGeneratedKeys();
+        rs.next();
+        bonus.setId(rs.getInt(1));
         return bonus;
     }
 
