@@ -36,8 +36,8 @@ public class ServerThread extends Thread {
         try {
 
             if (!(new File("res/options.xml")).exists()) {
-                System.out.println("Create the file res/options.xml. See res/options.default.xml for more explanation.");
-                return;
+                Logger.getLogger(ServerThread.class.getName()).log(Level.WARNING, "Create the file res/options.xml. See res/options.default.xml for more explanation.");
+                throw new Exception("Server database options not found.");
             }
 
             SAXBuilder sxb = new SAXBuilder();
@@ -92,7 +92,7 @@ public class ServerThread extends Thread {
             } catch (IOException ex) {
                 Logger.getLogger(ServerThread.class.getName()).log(Level.SEVERE, null, ex);
             }
-        } catch (JDOMException | IOException ex) {
+        } catch (Exception ex) {
             Logger.getLogger(ServerThread.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
