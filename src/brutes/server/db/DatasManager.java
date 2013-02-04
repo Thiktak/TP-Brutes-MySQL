@@ -41,7 +41,7 @@ public class DatasManager {
     private static final String XML_TAG_BONUS_SPEED = "speed";
     private static final String XML_TAG_BONUS_IMAGE = "image";
     static private Connection con;
-    static public String type;
+    static public String type = "";
 
     public static Connection getInstance(String type, String dbpath, String pseudo, String password) throws IOException {
         Class classType;
@@ -85,13 +85,11 @@ public class DatasManager {
 
     public static void populate() throws IOException {
         try {
-            Connection c = DatasManager.getInstance();
-
             DatasManager.executeUpdate("CREATE TABLE IF NOT EXISTS Users (id INTEGER PRIMARY KEY AUTOINCREMENT, pseudo TEXT, password TEXT, brute_id INTEGER, token TEXT, date_created DATETIME DEFAULT CURRENT_TIMESTAMP)");
             DatasManager.executeUpdate("CREATE TABLE IF NOT EXISTS Brutes (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, level INTEGER, life INTEGER, strength INTEGER, speed INTEGER, image_id INTEGER, date_created DATETIME DEFAULT CURRENT_TIMESTAMP)");
             DatasManager.executeUpdate("CREATE TABLE IF NOT EXISTS Bonus (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, level INTEGER, life INTEGER, strength INTEGER, speed INTEGER, image_id INTEGER)");
             DatasManager.executeUpdate("CREATE TABLE IF NOT EXISTS Shop (brute_id INTEGER, bonus_id INTEGER)");
-            DatasManager.executeUpdate("CREATE TABLE IF NOT EXISTS Fights (id INTEGER PRIMARY KEY AUTOINCREMENT, brute_id1 INTEGER, brute_id2 INTEGER, winner_id INTEGER, date_created DATETIME DEFAULT CURRENT_TIMESTAMP)");
+            DatasManager.executeUpdate("CREATE TABLE IF NOT EXISTS Fights (id INTEGER PRIMARY KEY AUTOINCREMENT, brute_id1 INTEGER, brute_id2 INTEGER, winner_id INTEGER, `text` TEXT, date_created DATETIME DEFAULT CURRENT_TIMESTAMP)");
 
             SAXBuilder sxb = new SAXBuilder();
             PreparedStatement psql;
@@ -122,8 +120,8 @@ public class DatasManager {
 
             Document xmlBrutes = sxb.build(DatasManager.XML_BRUTES);
             Element rootBrutes = xmlBrutes.getRootElement();
-            psql = c.prepareStatement("INSERT INTO Brutes (name, level, life, strength, speed, image_id) VALUES (?, ?, ?, ?, ?, ?)", PreparedStatement.RETURN_GENERATED_KEYS);
-            PreparedStatement psqlb = c.prepareStatement("INSERT INTO Shop (brute_id, bonus_id) VALUES (?, ?)");
+            psql = DatasManager.prepare("INSERT INTO Brutes (name, level, life, strength, speed, image_id) VALUES (?, ?, ?, ?, ?, ?)", PreparedStatement.RETURN_GENERATED_KEYS);
+            PreparedStatement psqlb = DatasManager.prepare("INSERT INTO Shop (brute_id, bonus_id) VALUES (?, ?)");
             for (Iterator<Element> i = rootBrutes.getChildren(DatasManager.XML_TAG_BRUTES).iterator(); i.hasNext();) {
                 Element current = i.next();
                 psql.setString(1, current.getChild(DatasManager.XML_TAG_BRUTES_NAME).getText());
@@ -149,6 +147,26 @@ public class DatasManager {
         } catch (JDOMException | SQLException ex) {
             Logger.getLogger(DatasManager.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+    
+    public static void unpopulate() throws IOException, SQLException {
+        DatasManager.executeUpdate("Delete from Users");
+        DatasManager.executeUpdate("ALTER TABLE Users AUTO_INCREMENT = 1");
+        DatasManager.executeUpdate("Delete from Brutes");
+        DatasManager.executeUpdate("ALTER TABLE Brutes AUTO_INCREMENT = 1");
+        DatasManager.executeUpdate("Delete from Bonus");
+        DatasManager.executeUpdate("ALTER TABLE Bonus AUTO_INCREMENT = 1");
+        DatasManager.executeUpdate("Delete from Shop");
+        DatasManager.executeUpdate("ALTER TABLE Shop AUTO_INCREMENT = 1");
+        DatasManager.executeUpdate("Delete from Fights");
+        DatasManager.executeUpdate("ALTER TABLE Fights AUTO_INCREMENT = 1");
+        /*
+        DatasManager.executeUpdate("ALTER TABLE tbl Users");
+        DatasManager.executeUpdate("DROP TABLE Brutes");
+        DatasManager.executeUpdate("DROP TABLE Bonus");
+        DatasManager.executeUpdate("DROP TABLE Shop");
+        DatasManager.executeUpdate("DROP TABLE Fights");
+        */
     }
 
     public static Connection getInstance() throws IOException {
