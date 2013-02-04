@@ -9,7 +9,7 @@ import java.io.PrintStream;
 
 /**
  *
- * @author Thiktak
+ * @author Olivares Georges <dev@olivares-georges.fr>
  */
 public class Console {
 
@@ -21,7 +21,7 @@ public class Console {
         this.out = new PrintStream(out);
         this.br = new BufferedReader(new InputStreamReader(in));
     }
-    
+
     public void printMenu() {
         this.out.println("TP-Brutes CONSOLE");
         this.out.println(" [options]    return informations about res/options.xml");
@@ -33,11 +33,11 @@ public class Console {
         this.out.println(" [exit]       kill the server and exit");
         this.out.println();
     }
-    
+
     public String readLine() throws IOException {
         return this.readLine("");
     }
-    
+
     public String readLine(String ask) throws IOException {
         ask = ask.isEmpty() ? "" : ask + "\n";
         this.out.print("\n" + ask + "> ");
@@ -47,7 +47,7 @@ public class Console {
     public String getLine() {
         return this.line;
     }
-    
+
     public String getCmd() {
         return this.line.split(" ", 1)[0];
     }

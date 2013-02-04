@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package brutes.server;
 
 import brutes.Brutes;
@@ -14,7 +10,7 @@ import java.net.URL;
 
 /**
  *
- * @author Thiktak
+ * @author Olivares Georges <dev@olivares-georges.fr>
  */
 public class ConsoleThread extends Thread {
 

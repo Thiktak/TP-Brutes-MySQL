@@ -3,13 +3,6 @@ package brutes;
 import brutes.client.ScenesContext;
 import brutes.server.ConsoleThread;
 import brutes.server.ServerThread;
-import brutes.server.db.DatasManager;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.InetAddress;
-import java.net.MalformedURLException;
-import java.net.URL;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.Event;
@@ -42,7 +35,7 @@ public class Brutes extends Application {
 
         //Brutes.SERVER.start();
         ConsoleThread.start(Brutes.SERVER);
-        
+
 
         ScenesContext.getInstance().setStage(stage);
         ScenesContext.getInstance().showLogin();
