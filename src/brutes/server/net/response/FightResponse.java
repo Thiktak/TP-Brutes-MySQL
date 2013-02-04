@@ -92,18 +92,20 @@ public class FightResponse extends Response {
         }
     }
 
-    public void readDoFight(String token) throws IOException, SQLException, NetworkResponseException {
+    public void readDoFight(String token) throws IOException, SQLException, NetworkResponseException, NotFoundEntityException {
         User user = FightResponse.checkTokenAndReturnUser(token);
         Fight fight = FightResponse.getFightWithChallenger(user);
 
         DoFight f = new DoFight(fight);
         Brute winner = f.exec();
         fight.setWinner(winner);
-        DatasManager.save(fight);
         
         if( winner == fight.getBrute1() ) {
-            this.getBonusToBrute(winner);
+            DatasManager.save(this.getBonusToBrute(BruteEntity.findByUser(user)));
+            
         }
+        
+        DatasManager.save(fight);
 
         System.out.println(f.getLogs());
         
