@@ -57,6 +57,21 @@ Il script comporte un client et un serveur (création automatique d'une base de 
 Pour lancer les tests associés au programme, faites un `Clean & Build` puis `Run File` sur `test/BrutesTestSequence`
 
 
+A l'exécution du JAR, un mode console s'ouvrira :
+```
+TP-Brutes CONSOLE
+    [options]    return informations about res/options.xml
+    [start]      start the server
+    [kill]       kill the server
+    [server]     return informations about the server
+    [populate]   populate the server with datas into res/*.xml
+    [unpopulate] unpopulate the server
+    [exit]       kill the server and exit
+``` 
+N'oubliez pas de **start** le serveur !
+
 ## Le protocole
+
+Port **42666**
 
 Pour plus d'informations, consultez le [document relatif au protocol (.docx)](https://github.com/Rauks/TP-Brutes/blob/master/Structure%20du%20protocole%20-%20Groupe%208.docx)
