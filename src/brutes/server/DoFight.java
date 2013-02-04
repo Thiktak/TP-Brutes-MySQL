@@ -134,12 +134,17 @@ public class DoFight {
                 this.round(i, this.fight.getBrute1(), this.fight.getBrute2());
             }
         }
+        
+        Brute winner = this.fight.getBrute1().getLife() > 0 ? this.fight.getBrute1() : this.fight.getBrute2();
 
         if (this.fight.getBrute1().getLife() > 0 && this.fight.getBrute2().getLife() > 0) {
-            this.addLogsLn("YOU CAN'T CHOOSE ? GOD CAN !");
+            this.addLogsLn("\nYOU CAN'T CHOOSE ? GOD CAN !");
             return ServerMath.random() ? this.fight.getBrute1() : this.fight.getBrute2();
         }
+        else {
+            this.addLogsLn("\nAnd the winner is ... " + winner);
+        }
         this.fight.setText(this.logs.toString());
-        return this.fight.getBrute1().getLife() > 0 ? this.fight.getBrute1() : this.fight.getBrute2(); // return the winner
+        return winner; // return the winner
     }
 }
